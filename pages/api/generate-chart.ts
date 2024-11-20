@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { S3 } from 'aws-amplify';
+import { Storage } from 'aws-amplify/storage';
 import puppeteer from 'puppeteer';
-import Chart from 'chart.js';
+import { Chart } from 'chart.js';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const chartImage = await page.screenshot({ type: 'png' });
         await browser.close();
 
-        const s3Response = await S3.put({
+        const s3Response = await Storage.put({
             key: `charts/${Date.now()}.png`,
             body: chartImage,
             contentType: 'image/png'

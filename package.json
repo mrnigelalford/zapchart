@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/backend": "^1.8.0",
     "aws-amplify": "^6.8.2",
     "chart.js": "^4.4.6",
     "next": "15.0.3",
