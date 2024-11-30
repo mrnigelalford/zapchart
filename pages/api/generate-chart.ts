@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { uploadData } from "aws-amplify/storage";
 import puppeteer from 'puppeteer';
-import { Chart } from 'chart.js';
+// import { Chart } from 'chart.js';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
