@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { uploadData } from "aws-amplify/storage";
 import puppeteer from 'puppeteer';
+import { fetchAuthSession } from 'aws-amplify/auth';
 // import { Chart } from 'chart.js';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -33,11 +34,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const chartImage = await page.screenshot({ type: 'png' });
         await browser.close();
 
+        const credentials = await fetchAuthSession()
+        console.log('credentials:', credentials.identityId)
+
         const s3Response = await uploadData({
             path: `charts/${Date.now()}.png`,
             data: chartImage,
             options: {
-                bucket: 'zapchart',
+                bucket: 'amplify-zapchart-atlmapper--zapchartbucket086b6183-tw6w6y5hceed',
             }
         });
 
