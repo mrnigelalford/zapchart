@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Storage } from 'aws-amplify/storage';
+import { uploadData } from "aws-amplify/storage";
 import puppeteer from 'puppeteer';
 import { Chart } from 'chart.js';
 
@@ -33,10 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const chartImage = await page.screenshot({ type: 'png' });
         await browser.close();
 
-        const s3Response = await Storage.put({
-            key: `charts/${Date.now()}.png`,
-            body: chartImage,
-            contentType: 'image/png'
+        const s3Response = await uploadData({
+            path: `charts/${Date.now()}.png`,
+            data: chartImage,
+            options: {
+                bucket: 'zapchart',
+            }
         });
 
         res.status(200).json({ message: 'Chart generated and stored', s3Response });
