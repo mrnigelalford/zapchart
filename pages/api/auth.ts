@@ -30,7 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 }
 
-export function withApiAuth(handler: Function) {
+export function withApiAuth(
+  handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void> | void
+) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const apiKey = req.headers['x-api-key'];
 

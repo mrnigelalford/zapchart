@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 
 export default function ChartPage() {
   const params = useParams();
@@ -38,7 +39,7 @@ export default function ChartPage() {
 
   return (
     <div className="chart-container">
-      <img src={imageUrl} alt="Chart" />
+      <Image src={imageUrl} alt="Chart" />
     </div>
   );
 }
