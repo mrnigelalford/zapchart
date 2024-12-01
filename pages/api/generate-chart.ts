@@ -2,7 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { put, list } from '@vercel/blob';
 import puppeteer from 'puppeteer';
 import crypto from 'crypto';
-
+import type { ZapierWebhookBody } from '@/types/zapier';
+import { transformZapierData } from '@/utils/zapier';
+import { withApiAuth } from './auth';
 // Cache interface
 interface ChartCache {
   hash: string;
@@ -11,7 +13,7 @@ interface ChartCache {
   createdAt: number;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const generateChart = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -88,14 +90,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       };
 
-      // Merge incoming data with defaults
-      const chartData = {
-        ...req.body.data,
-        datasets: req.body.data.datasets.map(dataset => ({
-          ...defaultStyles,
-          ...dataset
-        }))
-      };
+      // Handle Zapier webhook data format
+      const chartData = req.headers['x-zapier-webhook'] 
+        ? transformZapierData(req.body as ZapierWebhookBody)
+        : req.body.data;
 
       const chartOptions = {
         ...defaultOptions,
@@ -171,12 +169,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         contentType: 'image/png',
       });
 
-      res.status(200).json({
+      const response = {
         message: 'Chart generated and stored',
         id: dataHash,
         url: `/api/chart/${dataHash}`,
+        imageUrl: blob.url, // Direct URL for Zapier
         cached: false
-      });
+      };
+
+      // Format response based on caller
+      if (req.headers['x-zapier-webhook']) {
+        // Zapier expects a simplified response
+        res.status(200).json({
+          id: response.id,
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}${response.url}`,
+          imageUrl: response.imageUrl
+        });
+      } else {
+        res.status(200).json(response);
+      }
     } finally {
       if (browser) {
         await browser.close();
@@ -190,3 +201,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 } 
+
+export default withApiAuth(generateChart);
