@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { put, list } from '@vercel/blob';
 import puppeteer from 'puppeteer';
 import crypto from 'crypto';
-import type { ZapierWebhookBody } from '@/types/zapier';
-import { transformZapierData } from '@/utils/zapier';
 import { withApiAuth } from './auth';
+import { transformZapierData } from '../../utils/zapier';
+import { ZapierChartInput } from '../../types/zapier';
 // Cache interface
 interface ChartCache {
   hash: string;
@@ -92,7 +92,7 @@ const generateChart = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Handle Zapier webhook data format
       const chartData = req.headers['x-zapier-webhook'] 
-        ? transformZapierData(req.body as ZapierWebhookBody)
+        ? transformZapierData(req.body as ZapierChartInput)
         : req.body.data;
 
       const chartOptions = {

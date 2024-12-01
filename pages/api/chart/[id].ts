@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { list } from '@vercel/blob';
 import { cors } from '@/cors';
+import { withApiAuth } from '../auth';
 
 // CORS middleware to allow all origins
 const corsMiddleware = cors({
@@ -9,7 +10,7 @@ const corsMiddleware = cors({
   optionsSuccessStatus: 200
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const getChart = async (req: NextApiRequest, res: NextApiResponse) => {
   // Handle CORS
   await corsMiddleware(req, res);
   
@@ -46,3 +47,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 } 
+
+export default withApiAuth(getChart);
