@@ -9,12 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-amplify/adapter-nextjs": "^1.2.30",
-    "@aws-amplify/backend": "^1.8.0",
-    "@aws-amplify/backend-cli": "^1.4.2",
     "@vercel/blob": "^0.26.0",
-    "aws-amplify": "^6.10.0",
     "chart.js": "^4.4.6",
+    "cors": "^2.8.5",
     "next": "15.0.3",
     "puppeteer": "^23.8.0",
     "react": "19.0.0-rc-66855b96-20241106",
